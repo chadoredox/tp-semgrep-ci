@@ -15,14 +15,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           # Indispensable : sans fetch-depth: 0, le clone est "shallow"
           # (1 seul commit) et l'action ne peut pas résoudre base/head.
           fetch-depth: 0
 
       - name: TruffleHog OSS Scan
-        uses: trufflesecurity/trufflehog@main
+        uses: trufflesecurity/trufflehog@23255461ddf3958c4d949d89925b03eaf263d838 # main
         with:
           # L'action déduit elle-même la plage de commits :
           #  - push          : BASE = commit "before", HEAD = commit "after"
