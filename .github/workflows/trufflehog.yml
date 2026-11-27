@@ -1,0 +1,34 @@
+name: DevSecOps - TruffleHog Secret Scan
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+permissions:
+  contents: read
+
+jobs:
+  trufflehog:
+    name: Scan Verified Secrets
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          # Indispensable : sans fetch-depth: 0, le clone est "shallow"
+          # (1 seul commit) et l'action ne peut pas résoudre base/head.
+          fetch-depth: 0
+
+      - name: TruffleHog OSS Scan
+        uses: trufflesecurity/trufflehog@main
+        with:
+          # L'action déduit elle-même la plage de commits :
+          #  - push          : BASE = commit "before", HEAD = commit "after"
+          #  - pull_request  : BASE = base.sha de la PR, HEAD = head.sha de la PR
+          # --only-verified : n'échoue que sur un secret réellement ACTIF.
+          # NB : l'action trufflesecurity/trufflehog ajoute DÉJÀ `--fail` à sa
+          # commande interne ; le répéter dans extra_args provoque
+          # "flag 'fail' cannot be repeated" et fait échouer le job.
+          extra_args: --only-verified
